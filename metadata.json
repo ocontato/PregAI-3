@@ -1,0 +1,6 @@
+{
+  "name": "Sermões Top - Biblioteca Gospel",
+  "description": "Biblioteca digital de sermões, esboços de pregações, estudos bíblicos e ilustrações gospel com painel administrativo completo.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

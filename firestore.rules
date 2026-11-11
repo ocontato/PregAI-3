@@ -1,0 +1,127 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Default-deny safety net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isVerified() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        (request.auth.token.email == "tnkdzn@gmail.com" && request.auth.token.email_verified == true) ||
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidSermon(data) {
+      return data.keys().hasAll(['title', 'slug', 'content', 'category', 'author', 'status']) &&
+        data.title is string && data.title.size() <= 300 &&
+        data.slug is string && data.slug.size() <= 300 &&
+        data.content is string && data.content.size() <= 200000 &&
+        data.category is string && data.category.size() <= 100 &&
+        data.author is string && data.author.size() <= 100 &&
+        (data.status == 'published' || data.status == 'draft');
+    }
+
+    function isValidIllustration(data) {
+      return data.keys().hasAll(['title', 'story', 'category']) &&
+        data.title is string && data.title.size() <= 300 &&
+        data.story is string && data.story.size() <= 100000 &&
+        data.category is string && data.category.size() <= 100;
+    }
+
+    function isValidCategory(data) {
+      return data.keys().hasAll(['name', 'slug']) &&
+        data.name is string && data.name.size() <= 100 &&
+        data.slug is string && data.slug.size() <= 100;
+    }
+
+    function isValidFavorite(data) {
+      return data.keys().hasAll(['userId', 'sermonId']) &&
+        data.userId == request.auth.uid &&
+        data.sermonId is string && data.sermonId.size() <= 128;
+    }
+
+    // Administrators collection
+    match /admins/{adminId} {
+      allow get: if isValidId(adminId) && isAdmin();
+      allow list: if isAdmin();
+      allow create, update, delete: if isValidId(adminId) && isAdmin();
+    }
+
+    // User profiles
+    match /users/{userId} {
+      allow get: if isValidId(userId) && (isOwner(userId) || isAdmin());
+      allow list: if isAdmin();
+      allow create: if isValidId(userId) && isOwner(userId) && incoming().email == request.auth.token.email;
+      allow update: if isValidId(userId) && isOwner(userId) && incoming().diff(existing()).affectedKeys().hasOnly(['displayName', 'photoURL', 'updatedAt']);
+      allow delete: if isValidId(userId) && isAdmin();
+    }
+
+    // Sermons and Outlines
+    match /sermons/{sermonId} {
+      allow get: if isValidId(sermonId) && (existing().status == 'published' || isAdmin());
+      allow list: if (resource.data.status == 'published') || isAdmin();
+      allow create: if isValidId(sermonId) && isAdmin() && isValidSermon(incoming());
+      allow update: if isValidId(sermonId) && isAdmin() && isValidSermon(incoming());
+      allow delete: if isValidId(sermonId) && isAdmin();
+    }
+
+    // Categories
+    match /categories/{categoryId} {
+      allow get: if isValidId(categoryId);
+      allow list: if true;
+      allow create, update, delete: if isValidId(categoryId) && isAdmin() && isValidCategory(incoming());
+      allow delete: if isValidId(categoryId) && isAdmin();
+    }
+
+    // Gospel Illustrations
+    match /illustrations/{illustrationId} {
+      allow get: if isValidId(illustrationId);
+      allow list: if true;
+      allow create, update: if isValidId(illustrationId) && isAdmin() && isValidIllustration(incoming());
+      allow delete: if isValidId(illustrationId) && isAdmin();
+    }
+
+    // User Favorites / Bookmarks
+    match /favorites/{favoriteId} {
+      allow get: if isValidId(favoriteId) && isSignedIn() && (existing().userId == request.auth.uid || isAdmin());
+      allow list: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isValidId(favoriteId) && isSignedIn() && isValidFavorite(incoming());
+      allow delete: if isValidId(favoriteId) && isSignedIn() && (existing().userId == request.auth.uid || isAdmin());
+      allow update: if false;
+    }
+
+    // Portal Settings & Social Networks
+    match /settings/{settingId} {
+      allow get: if isValidId(settingId);
+      allow list: if true;
+      allow create, update, delete: if isValidId(settingId) && isAdmin();
+    }
+  }
+}

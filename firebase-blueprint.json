@@ -1,0 +1,366 @@
+{
+  "entities": {
+    "Admin": {
+      "title": "Admin",
+      "description": "Registered administrator with CMS management rights",
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "Administrator email address"
+        },
+        "role": {
+          "type": "string",
+          "description": "Role name such as superadmin or editor"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "ISO timestamp of creation"
+        }
+      },
+      "required": ["email", "role"]
+    },
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Public user profile information",
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "User email address"
+        },
+        "displayName": {
+          "type": "string",
+          "description": "Display name of the member"
+        },
+        "photoURL": {
+          "type": "string",
+          "description": "Profile picture URL"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "ISO timestamp of registration"
+        }
+      },
+      "required": ["email", "displayName"]
+    },
+    "Sermon": {
+      "title": "Sermon",
+      "description": "Sermon, preaching outline, or biblical study",
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Main title of the sermon"
+        },
+        "slug": {
+          "type": "string",
+          "description": "URL-friendly slug"
+        },
+        "subtitle": {
+          "type": "string",
+          "description": "Secondary title or subtitle"
+        },
+        "description": {
+          "type": "string",
+          "description": "Short summary or abstract of the sermon"
+        },
+        "content": {
+          "type": "string",
+          "description": "Full rich text content formatted with headings, quotes, and outlines"
+        },
+        "biblicalReferences": {
+          "type": "string",
+          "description": "Biblical scriptures and verse references"
+        },
+        "category": {
+          "type": "string",
+          "description": "Primary theological category"
+        },
+        "categorySlug": {
+          "type": "string",
+          "description": "Slug for filtering by category"
+        },
+        "author": {
+          "type": "string",
+          "description": "Pastor, preacher, or author name"
+        },
+        "imageUrl": {
+          "type": "string",
+          "description": "Cover image URL"
+        },
+        "keywords": {
+          "type": "array",
+          "description": "Search tags and keywords"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["published", "draft"],
+          "description": "Publication status"
+        },
+        "featured": {
+          "type": "boolean",
+          "description": "Whether the sermon is featured on the homepage"
+        },
+        "readingTimeMinutes": {
+          "type": "number",
+          "description": "Estimated reading duration in minutes"
+        },
+        "publishedAt": {
+          "type": "string",
+          "description": "Publication timestamp"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Creation timestamp"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Last update timestamp"
+        }
+      },
+      "required": ["title", "slug", "content", "category", "author", "status"]
+    },
+    "Category": {
+      "title": "Category",
+      "description": "Theological category for classifying content",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Category name"
+        },
+        "slug": {
+          "type": "string",
+          "description": "URL-safe identifier"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief description of the category theme"
+        },
+        "icon": {
+          "type": "string",
+          "description": "Icon identifier"
+        },
+        "color": {
+          "type": "string",
+          "description": "Accent color code or class"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp of creation"
+        }
+      },
+      "required": ["name", "slug"]
+    },
+    "Illustration": {
+      "title": "Illustration",
+      "description": "Gospel story or preaching illustration",
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Title of the illustration"
+        },
+        "story": {
+          "type": "string",
+          "description": "The parable, story, or analogy text"
+        },
+        "application": {
+          "type": "string",
+          "description": "Moral lesson and preaching application"
+        },
+        "biblicalReference": {
+          "type": "string",
+          "description": "Associated biblical passage"
+        },
+        "category": {
+          "type": "string",
+          "description": "Thematic category"
+        },
+        "imageUrl": {
+          "type": "string",
+          "description": "Illustration visual art or image"
+        },
+        "author": {
+          "type": "string",
+          "description": "Author or source of the illustration"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp of creation"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp of update"
+        }
+      },
+      "required": ["title", "story", "category"]
+    },
+    "Favorite": {
+      "title": "Favorite",
+      "description": "Saved sermon bookmark for an authenticated user",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "UID of the bookmark owner"
+        },
+        "sermonId": {
+          "type": "string",
+          "description": "ID of the bookmarked sermon"
+        },
+        "sermonTitle": {
+          "type": "string",
+          "description": "Cached title of the sermon"
+        },
+        "sermonCategory": {
+          "type": "string",
+          "description": "Cached category of the sermon"
+        },
+        "sermonAuthor": {
+          "type": "string",
+          "description": "Cached author of the sermon"
+        },
+        "sermonImageUrl": {
+          "type": "string",
+          "description": "Cached image URL"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Creation timestamp"
+        }
+      },
+      "required": ["userId", "sermonId"]
+    },
+    "SocialSettings": {
+      "title": "SocialSettings",
+      "description": "Configurable social media URLs for the church / ministry",
+      "type": "object",
+      "properties": {
+        "instagram": {
+          "type": "string",
+          "description": "Instagram profile URL"
+        },
+        "youtube": {
+          "type": "string",
+          "description": "YouTube channel URL"
+        },
+        "facebook": {
+          "type": "string",
+          "description": "Facebook page URL"
+        },
+        "whatsapp": {
+          "type": "string",
+          "description": "WhatsApp group or contact link"
+        },
+        "telegram": {
+          "type": "string",
+          "description": "Telegram channel link"
+        },
+        "spotify": {
+          "type": "string",
+          "description": "Spotify podcast link"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Last update timestamp"
+        }
+      }
+    },
+    "AdBannerSettings": {
+      "title": "AdBannerSettings",
+      "description": "Configurable advertising and sponsorship banner before the footer",
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Whether the ad space is active and visible"
+        },
+        "tag": {
+          "type": "string",
+          "description": "Label badge such as Publicidade or Patrocinador"
+        },
+        "sponsorName": {
+          "type": "string",
+          "description": "Name of the sponsor or ministry partner"
+        },
+        "badgeText": {
+          "type": "string",
+          "description": "Promotional badge text like Bolsas de Estudo or 50% OFF"
+        },
+        "title": {
+          "type": "string",
+          "description": "Title headline of the ad banner"
+        },
+        "description": {
+          "type": "string",
+          "description": "Explanatory text of the ad banner"
+        },
+        "ctaText": {
+          "type": "string",
+          "description": "Button call to action text"
+        },
+        "linkUrl": {
+          "type": "string",
+          "description": "Destination link URL"
+        },
+        "imageUrl": {
+          "type": "string",
+          "description": "Banner background or product image URL"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Last update timestamp"
+        }
+      },
+      "required": ["enabled", "title", "linkUrl"]
+    }
+  },
+  "firestore": {
+    "/admins/{adminId}": {
+      "schema": {
+        "$ref": "Admin"
+      },
+      "description": "List of authorized administrator accounts"
+    },
+    "/users/{userId}": {
+      "schema": {
+        "$ref": "UserProfile"
+      },
+      "description": "User profile records accessible by the user or admin"
+    },
+    "/sermons/{sermonId}": {
+      "schema": {
+        "$ref": "Sermon"
+      },
+      "description": "Collection of all sermons, drafts, and published outlines"
+    },
+    "/categories/{categoryId}": {
+      "schema": {
+        "$ref": "Category"
+      },
+      "description": "Taxonomy of gospel categories"
+    },
+    "/illustrations/{illustrationId}": {
+      "schema": {
+        "$ref": "Illustration"
+      },
+      "description": "Gospel illustrations and parables for sermons"
+    },
+    "/favorites/{favoriteId}": {
+      "schema": {
+        "$ref": "Favorite"
+      },
+      "description": "User saved bookmarks"
+    },
+    "/settings/{settingId}": {
+      "schema": {
+        "$ref": "SocialSettings"
+      },
+      "description": "General portal settings and social media links"
+    }
+  }
+}
